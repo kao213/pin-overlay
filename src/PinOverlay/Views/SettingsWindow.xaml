@@ -1,0 +1,37 @@
+<Window x:Class="PinOverlay.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="pin-overlay — 設定" Width="840" Height="640" MinWidth="560" MinHeight="420"
+        WindowStartupLocation="CenterScreen" Background="#F3F3F3">
+    <DockPanel>
+        <!-- 画像フォルダ -->
+        <Border DockPanel.Dock="Top" Background="White" Padding="16,10">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="⟳ 再読み込み" Padding="10,3" Click="OnReload"
+                        ToolTip="フォルダに画像を追加・削除したら押してください" />
+                <Button DockPanel.Dock="Right" Content="画像フォルダを開く" Padding="10,3" Margin="0,0,6,0" Click="OnOpenFolder" />
+                <!-- タブの上に重ねるとテキストタブの操作部を隠すので、ここに置く -->
+                <TextBlock x:Name="EmptyHint" Visibility="Collapsed" Margin="0,0,12,0" TextWrapping="Wrap"
+                           VerticalAlignment="Center" Foreground="#555"
+                           Text="画像フォルダの中にサブフォルダを作り、画像を入れてから「再読み込み」を押してください。サブフォルダ 1 つがタブ 1 つになります。" />
+            </DockPanel>
+        </Border>
+
+        <!-- 下部 -->
+        <Border DockPanel.Dock="Bottom" Background="White" BorderBrush="#E3E3E3" BorderThickness="0,1,0,0" Padding="16,12">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="透過して表示 ▶" Padding="22,8" FontSize="14" FontWeight="Bold"
+                        Foreground="White" Background="#0067C0" BorderBrush="#0067C0" Click="OnStartOverlay" />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="不透明度" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <Slider x:Name="OpacitySlider" Width="180" Minimum="10" Maximum="100"
+                            TickFrequency="5" IsSnapToTickEnabled="True" VerticalAlignment="Center"
+                            ValueChanged="OnOpacityChanged" />
+                    <TextBlock x:Name="OpacityText" Width="44" Margin="8,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <TabControl x:Name="Tabs" Margin="0,4,0,0" BorderThickness="0,1,0,0" />
+    </DockPanel>
+</Window>

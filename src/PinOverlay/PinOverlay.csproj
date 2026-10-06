@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <!-- タスクトレイ（NotifyIcon）と色の選択（ColorDialog）に使う -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <!-- Linux／macOS でもビルドできるようにする -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <RootNamespace>PinOverlay</RootNamespace>
+    <AssemblyName>pin-overlay</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>pin-overlay.ico</ApplicationIcon>
+    <!-- Win32 API の呼び出し（LibraryImport）に必要 -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- WPF では高 DPI の設定は app.manifest で行うので、WinForms 向けの警告は抑える -->
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+  </PropertyGroup>
+
+  <!-- 実行環境を同梱した単一の exe として配布する -->
+  <PropertyGroup>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF と名前が衝突するので、WinForms と System.Drawing は暗黙の using から外す -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- トレイアイコン用（TrayIcon.cs が この名前で読む） -->
+    <EmbeddedResource Include="pin-overlay.ico" LogicalName="PinOverlay.pin-overlay.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PinOverlay.Core\PinOverlay.Core.csproj" />
+  </ItemGroup>
+</Project>

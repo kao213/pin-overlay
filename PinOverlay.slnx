@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PinOverlay.Core/PinOverlay.Core.csproj" />
+    <Project Path="src/PinOverlay/PinOverlay.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PinOverlay.Core.Tests/PinOverlay.Core.Tests.csproj" />
+  </Folder>
+</Solution>
