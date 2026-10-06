@@ -78,7 +78,7 @@ internal sealed class AppController
             RequestSave();
         };
 
-        _settingsWindow = new SettingsWindow(this);
+        _settingsWindow = new SettingsWindow(this, _settings.SettingsWindow);
         _tray = new TrayIcon(EnterEditMode, Exit);
 
         Reload();
@@ -127,6 +127,7 @@ internal sealed class AppController
         }
 
         _settingsWindow?.SetTabs(_imageTabs, _textTab!);
+        UpdateStartButton();
         RequestSave();
     }
 
@@ -141,6 +142,11 @@ internal sealed class AppController
     /// <summary>設定画面を開き、かたまりをドラッグで動かせるようにする。</summary>
     public void EnterEditMode()
     {
+        // 終了処理中に、もう一度起動された合図が遅れて届いたとき、閉じた設定画面を開き直さないため
+        if (IsExiting)
+        {
+            return;
+        }
         _editMode = true;
         foreach (var overlay in _overlays.Values)
         {
@@ -161,6 +167,7 @@ internal sealed class AppController
     public void EnterOverlayMode()
     {
         _editMode = false;
+        RememberSettingsWindow();
         _settingsWindow?.Hide();
         foreach (var overlay in _overlays.Values)
         {
@@ -176,6 +183,7 @@ internal sealed class AppController
             return;
         }
         IsExiting = true;
+        RememberSettingsWindow();
         SaveNow();
         foreach (var overlay in _overlays.Values)
         {
@@ -186,6 +194,24 @@ internal sealed class AppController
         Application.Current.Shutdown();
     }
 
+    /// <summary>設定画面の位置と大きさを覚える（最大化中・最小化中は元に戻したときの位置と大きさ）。</summary>
+    private void RememberSettingsWindow()
+    {
+        if (_settingsWindow is not { IsVisible: true } window)
+        {
+            return;
+        }
+        var bounds = window.RestoreBounds;
+        _settings.SettingsWindow = new WindowBounds
+        {
+            Left = bounds.Left,
+            Top = bounds.Top,
+            Width = bounds.Width,
+            Height = bounds.Height,
+            Maximized = window.WindowState == WindowState.Maximized,
+        };
+    }
+
     private Color OutlineColor =>
         ColorConverter.ConvertFromString(_settings.OutlineColor) is Color color ? color : Colors.Black;
 
@@ -193,6 +219,7 @@ internal sealed class AppController
     {
         _overlays[TextOverlayKey] = CreateOverlay(TextOverlayKey, "テキスト", _settings.Text.Position, 0, BuildText);
         _overlays[TextOverlayKey].Refresh();
+        UpdateStartButton();
     }
 
     private OverlayWindow CreateOverlay(string key, string label, PixelPoint? position, int index, Func<double, FrameworkElement?> factory)
@@ -231,7 +258,11 @@ internal sealed class AppController
         {
             overlay.Refresh();
         }
+        UpdateStartButton();
     }
+
+    private void UpdateStartButton() =>
+        _settingsWindow?.SetCanStartOverlay(_overlays.Values.Any(o => o.IsShowingAnything));
 
     /// <summary>画像タブのかたまり。チェックした画像を横に並べ、折り返し幅を超えたら次の行へ送る（docs/design.md 5 章）。</summary>
     private static FrameworkElement? BuildImageGroup(ImageTabViewModel tab, double pixelsPerDip)

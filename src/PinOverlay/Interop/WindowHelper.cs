@@ -61,9 +61,21 @@ internal static class WindowHelper
         return new PixelPoint(work.Left + offset, work.Top + offset);
     }
 
-    private static RECT PrimaryWorkArea()
+    /// <summary>指定した位置・大きさの四角が、いちばん近いモニターの作業領域からはみ出さない位置を返す。</summary>
+    public static PixelPoint ClampToWorkArea(int x, int y, int width, int height)
     {
-        var monitor = MonitorFromPoint(default, MONITOR_DEFAULTTOPRIMARY);
+        var rect = new RECT { Left = x, Top = y, Right = x + width, Bottom = y + height };
+        var work = WorkArea(MonitorFromRect(rect, MONITOR_DEFAULTTONEAREST));
+        // モニター情報を取れなかったとき（作業領域が空）に Math.Clamp が例外を出さないよう、上限を下限より小さくしない
+        return new PixelPoint(
+            Math.Clamp(x, work.Left, Math.Max(work.Left, work.Right - width)),
+            Math.Clamp(y, work.Top, Math.Max(work.Top, work.Bottom - height)));
+    }
+
+    private static RECT PrimaryWorkArea() => WorkArea(MonitorFromPoint(default, MONITOR_DEFAULTTOPRIMARY));
+
+    private static RECT WorkArea(nint monitor)
+    {
         var info = new MONITORINFO { cbSize = System.Runtime.InteropServices.Marshal.SizeOf<MONITORINFO>() };
         GetMonitorInfo(monitor, ref info);
         return info.rcWork;

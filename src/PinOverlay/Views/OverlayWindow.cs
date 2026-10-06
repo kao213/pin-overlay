@@ -97,6 +97,9 @@ internal sealed class OverlayWindow : Window
         }
     }
 
+    /// <summary>表示するものがあるか。</summary>
+    public bool IsShowingAnything => _hasContent;
+
     public bool EditMode
     {
         get => _editMode;
@@ -186,9 +189,38 @@ internal sealed class OverlayWindow : Window
             _gear.Owner ??= this;
             _gear.Show();
         }
-        // かたまりの右上の角の内側に置く
+        // かたまりの右上ではなく、1 行目の一番右の画像の右上に置く。
+        // 折り返し幅を設定すると右側に何もない余白ができ、かたまりの右上だと ⚙ が画像から離れて見失いやすいため
+        _root.UpdateLayout();
+        var anchor = TopRightCorner();
+        var dpi = VisualTreeHelper.GetDpi(this);
         var rect = WindowHelper.GetRect(this);
         var gear = WindowHelper.GetRect(_gear);
-        WindowHelper.MoveTo(_gear, rect.Right - gear.Width, rect.Top);
+        // かたまりが画面の端からはみ出していても ⚙ は押せるよう、画面の中に収める
+        var position = WindowHelper.ClampToWorkArea(
+            rect.Left + (int)Math.Round(anchor.X * dpi.DpiScaleX) - gear.Width,
+            rect.Top + (int)Math.Round(anchor.Y * dpi.DpiScaleY),
+            gear.Width, gear.Height);
+        WindowHelper.MoveTo(_gear, position.X, position.Y);
+    }
+
+    /// <summary>中身の 1 行目のうち一番右にあるものの右上の角（ウィンドウ内の WPF 単位）。</summary>
+    private Point TopRightCorner()
+    {
+        List<FrameworkElement> items = _host.Child switch
+        {
+            Panel panel => panel.Children.OfType<FrameworkElement>().ToList(),
+            FrameworkElement single => [single],
+            _ => [],
+        };
+        if (items.Count == 0)
+        {
+            return new Point(ActualWidth, 0);
+        }
+        var boxes = items.Select(e => new Rect(e.TranslatePoint(default, this), e.RenderSize)).ToList();
+        var top = boxes.Min(b => b.Top);
+        // 1 行目 = 一番上の段と同じ高さから始まるもの（画像は上揃えで並べている）
+        var right = boxes.Where(b => b.Top - top < 1).Max(b => b.Right);
+        return new Point(right, top);
     }
 }

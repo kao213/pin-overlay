@@ -17,6 +17,9 @@ public sealed class AppSettings
     /// <summary>文字の縁取りの色（#AARRGGBB）。</summary>
     public string OutlineColor { get; set; } = "#FF000000";
 
+    /// <summary>設定画面の位置と大きさ（WPF の単位）。まだ開いたことがなければ null。</summary>
+    public WindowBounds? SettingsWindow { get; set; }
+
     public ImageTabSettings GetOrAddTab(string name)
     {
         if (!Tabs.TryGetValue(name, out var tab))
@@ -53,6 +56,15 @@ public sealed class TextTabSettings
 
     /// <summary>かたまりの位置（画面上の実ピクセル）。未配置なら null。</summary>
     public PixelPoint? Position { get; set; }
+}
+
+public sealed class WindowBounds
+{
+    public double Left { get; set; }
+    public double Top { get; set; }
+    public double Width { get; set; }
+    public double Height { get; set; }
+    public bool Maximized { get; set; }
 }
 
 public sealed class PixelPoint

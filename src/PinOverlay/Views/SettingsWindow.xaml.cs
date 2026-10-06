@@ -3,6 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using PinOverlay.Core;
+using PinOverlay.Interop;
 using PinOverlay.ViewModels;
 
 namespace PinOverlay.Views;
@@ -15,10 +17,23 @@ public partial class SettingsWindow : Window
     private readonly AppController _controller;
     private Point? _dragStart;
 
-    internal SettingsWindow(AppController controller)
+    /// <param name="bounds">前回の位置と大きさ。null なら画面中央に既定の大きさで開く</param>
+    internal SettingsWindow(AppController controller, WindowBounds? bounds)
     {
         InitializeComponent();
         _controller = controller;
+        if (bounds is not null)
+        {
+            WindowStartupLocation = WindowStartupLocation.Manual;
+            Left = bounds.Left;
+            Top = bounds.Top;
+            Width = bounds.Width;
+            Height = bounds.Height;
+            if (bounds.Maximized)
+            {
+                WindowState = WindowState.Maximized;
+            }
+        }
         OpacitySlider.Value = Math.Round(controller.Opacity * 100);
         UpdateOpacityText();
     }
@@ -139,6 +154,13 @@ public partial class SettingsWindow : Window
 
     private void OnStartOverlay(object sender, RoutedEventArgs e) => _controller.EnterOverlayMode();
 
+    /// <summary>表示するものが 1 件もなければ「透過して表示」を押せなくする。</summary>
+    public void SetCanStartOverlay(bool canStart)
+    {
+        StartOverlayButton.IsEnabled = canStart;
+        StartOverlayButton.ToolTip = canStart ? null : "表示する画像かテキストを選んでください";
+    }
+
     private void OnOpacityChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (_controller is null)
@@ -150,6 +172,13 @@ public partial class SettingsWindow : Window
     }
 
     private void UpdateOpacityText() => OpacityText.Text = $"{OpacitySlider.Value:0}%";
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        // 前回いたモニターを外していたら、メインモニターに戻す
+        WindowHelper.EnsureOnScreen(this, 0);
+    }
 
     /// <summary>×で閉じたらアプリを終了する（トレイの「終了」と同じ）。</summary>
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

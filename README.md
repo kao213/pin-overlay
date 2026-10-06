@@ -9,6 +9,8 @@
 好きな画像やテキストを、画面の最前面にピン留めできるオフラインのオーバーレイツールです。
 もともとは Escape from Tarkov の Collector タスクで、必要なアイテムをレイド中に表示しておくために作りました。フォルダに画像を入れれば、ほかの用途にも使えます。
 
+> Windows での動作確認がまだ済んでいません。確認できたら、この README を更新します。
+
 ### 機能
 
 - **画像の表示** — `images` フォルダのサブフォルダがタブになり、チェックを付けた画像を最前面に表示します
@@ -48,7 +50,7 @@
 4. 設定画面の「⟳ 再読み込み」を押すと、タブが表示されます
 5. 表示したい画像にチェックを付けます。画面上にかたまりが表示されるので、ドラッグで好きな位置に動かします
 6. 「透過して表示 ▶」を押すと設定画面が閉じ、かたまりはクリックを下に通す状態になります
-7. 設定画面に戻るには、かたまりの右上の ⚙ を押すか、タスクトレイのアイコンを右クリックして「設定画面を開く」を選びます
+7. 設定画面に戻るには、かたまりの右上（1行目の一番右の画像の右上）の ⚙ を押すか、タスクトレイのアイコンを右クリックして「設定画面を開く」を選びます。どちらも見つからないときは、pin-overlay.exe をもう一度起動すると設定画面が開きます
 
 アプリを終了するには、設定画面を閉じるか、タスクトレイのアイコンを右クリックして「終了」を選びます。
 
@@ -78,6 +80,8 @@ dotnet publish src/PinOverlay -c Release -o publish
 An offline overlay tool that pins any image or text you like on top of all other windows.
 It was originally built to keep the items needed for the Collector task in Escape from Tarkov visible during raids, but it works for anything you put in its image folder.
 
+> Not yet verified on Windows. This README will be updated once it has been tested.
+
 ### Features
 
 - **Images** — Each subfolder of the `images` folder becomes a tab. Checked images are shown on top of all windows
@@ -104,7 +108,7 @@ It was originally built to keep the items needed for the Collector task in Escap
 4. Press "⟳ 再読み込み" (Reload) in the settings window to show the tabs
 5. Check the images you want to show. A group appears on screen; drag it where you want it
 6. Press "透過して表示 ▶" (Show overlay). The settings window closes and clicks pass through the groups
-7. To return to the settings window, click the ⚙ at the top-right of a group, or right-click the tray icon and choose "設定画面を開く" (Open settings)
+7. To return to the settings window, click the ⚙ at the top-right of the rightmost image in the first row of a group, or right-click the tray icon and choose "設定画面を開く" (Open settings). If you can find neither, launch pin-overlay.exe again to open the settings window
 
 To quit, close the settings window or right-click the tray icon and choose "終了" (Exit).
 

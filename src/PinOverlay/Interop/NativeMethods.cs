@@ -16,6 +16,7 @@ internal static partial class NativeMethods
 
     public const uint MONITOR_DEFAULTTONULL = 0;
     public const uint MONITOR_DEFAULTTOPRIMARY = 1;
+    public const uint MONITOR_DEFAULTTONEAREST = 2;
 
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
@@ -64,6 +65,12 @@ internal static partial class NativeMethods
 
     [LibraryImport("user32.dll")]
     public static partial nint MonitorFromPoint(POINT pt, uint dwFlags);
+
+    public const int ASFW_ANY = -1;
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool AllowSetForegroundWindow(int dwProcessId);
 
     [LibraryImport("user32.dll", EntryPoint = "GetMonitorInfoW")]
     [return: MarshalAs(UnmanagedType.Bool)]

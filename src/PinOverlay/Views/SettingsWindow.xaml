@@ -20,7 +20,8 @@
         <!-- 下部 -->
         <Border DockPanel.Dock="Bottom" Background="White" BorderBrush="#E3E3E3" BorderThickness="0,1,0,0" Padding="16,12">
             <DockPanel>
-                <Button DockPanel.Dock="Right" Content="透過して表示 ▶" Padding="22,8" FontSize="14" FontWeight="Bold"
+                <Button x:Name="StartOverlayButton" DockPanel.Dock="Right" Content="透過して表示 ▶" Padding="22,8"
+                        ToolTipService.ShowOnDisabled="True" FontSize="14" FontWeight="Bold"
                         Foreground="White" Background="#0067C0" BorderBrush="#0067C0" Click="OnStartOverlay" />
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="不透明度" VerticalAlignment="Center" Margin="0,0,8,0" />

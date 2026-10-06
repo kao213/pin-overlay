@@ -22,6 +22,7 @@ public sealed class SettingsStoreTests : IDisposable
         tab.Position = new PixelPoint(10, 20);
         tab.CheckedFiles.Add("Aaa.png");
         settings.Text.ContentXaml = "<Section />";
+        settings.SettingsWindow = new WindowBounds { Left = 100, Top = 50, Width = 900, Height = 700, Maximized = true };
 
         SettingsStore.Save(path, settings);
         var loaded = SettingsStore.Load(path);
@@ -36,6 +37,11 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.Equal(20, loadedTab.Position.Y);
         Assert.Equal(["Aaa.png"], loadedTab.CheckedFiles);
         Assert.Equal("<Section />", loaded.Text.ContentXaml);
+        Assert.Equal(100, loaded.SettingsWindow!.Left);
+        Assert.Equal(50, loaded.SettingsWindow.Top);
+        Assert.Equal(900, loaded.SettingsWindow.Width);
+        Assert.Equal(700, loaded.SettingsWindow.Height);
+        Assert.True(loaded.SettingsWindow.Maximized);
     }
 
     [Fact]
